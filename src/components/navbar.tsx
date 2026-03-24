@@ -55,6 +55,12 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
             Browse
           </Link>
           <Link
+            href="/docs"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors"
+          >
+            Docs
+          </Link>
+          <Link
             href="/about"
             className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors"
           >
