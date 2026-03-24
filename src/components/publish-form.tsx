@@ -236,7 +236,7 @@ export function PublishForm() {
                   min="0.99"
                   step="0.01"
                   value={form.price}
-                  onChange={(e) => updateForm("price", parseFloat(e.target.value))}
+                  onChange={(e) => updateForm("price", parseFloat(e.target.value) || 0)}
                   className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm outline-none focus:border-[var(--accent)]"
                 />
               </div>
