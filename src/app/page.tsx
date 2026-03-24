@@ -144,6 +144,8 @@ export default async function HomePage() {
                 reviewCount={skill.reviewCount}
                 compatibility={skill.compatibility}
                 verified={skill.verified}
+                reviewStatus={skill.reviewStatus}
+                securityScore={skill.securityScore}
                 sourceType={skill.sourceType}
                 listingType={skill.listingType}
                 originalAuthor={skill.originalAuthor}
