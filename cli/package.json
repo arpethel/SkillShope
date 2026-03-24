@@ -1,0 +1,28 @@
+{
+  "name": "skillshope",
+  "version": "0.1.0",
+  "description": "CLI for Skill Shope — install AI skills, MCP servers, and agent configs",
+  "bin": {
+    "skillshope": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ai",
+    "skills",
+    "mcp",
+    "claude-code",
+    "agents"
+  ],
+  "author": "Skill Shope",
+  "license": "SEE LICENSE IN ../LICENSE",
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "^25.5.0"
+  }
+}
