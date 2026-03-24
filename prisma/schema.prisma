@@ -23,6 +23,7 @@ model User {
   skills        Skill[]
   reviews       Review[]
   purchases     Purchase[]
+  apiKeys       ApiKey[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -127,6 +128,16 @@ model DownloadToken {
   purchase   Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   expiresAt  DateTime?
   createdAt  DateTime @default(now())
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  keyHash   String    @unique
+  name      String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastUsed  DateTime?
+  createdAt DateTime  @default(now())
 }
 
 model Review {
