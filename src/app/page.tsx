@@ -124,7 +124,7 @@ export default async function HomePage() {
             No config files. No dependency hell. Find what you need, install it, and move on.
           </p>
         </div>
-        <div className="grid gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
             {
               step: "01",
@@ -145,11 +145,11 @@ export default async function HomePage() {
               icon: Zap,
             },
           ].map((item) => (
-            <div key={item.step} className="text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-soft)]">
-                <item.icon className="h-6 w-6 text-[var(--accent)]" />
+            <div key={item.step} className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-soft)]">
+                <item.icon className="h-5 w-5 text-[var(--accent)]" />
               </div>
-              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+              <div className="mb-1 text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
                 Step {item.step}
               </div>
               <h3 className="mb-2 text-lg font-bold">{item.title}</h3>
