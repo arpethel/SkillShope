@@ -107,6 +107,18 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // Store skill content for paid skills
+  if (!body.isFree && body.skillContent) {
+    const content = body.skillContent.slice(0, 100_000); // 100KB max
+    await prisma.skillFile.create({
+      data: {
+        skillId: skill.id,
+        filename: "SKILL.md",
+        content,
+      },
+    });
+  }
+
   // Auto-verify source in the background (non-blocking)
   verifySkillSource(skill.id).catch(() => {});
 
