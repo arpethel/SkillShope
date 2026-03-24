@@ -24,7 +24,9 @@ export async function GET(
       sourceUrl: true,
       compatibility: true,
       verified: true,
+      currentVersion: true,
       files: { select: { filename: true } },
+      versions: { select: { version: true, changelog: true, createdAt: true }, orderBy: { createdAt: "desc" as const }, take: 5 },
       author: { select: { name: true, publisherVerified: true } },
     },
   });
