@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import { MessageCircle, X, Send, Loader2, Sparkles } from "lucide-react";
+import { X, Send, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { Markdown } from "./markdown";
+import { onHappieOpen } from "@/lib/happie-state";
 
 type Message = {
   role: "user" | "assistant";
@@ -18,6 +20,15 @@ export function Happie() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
+
+  // Listen for external open events (e.g., from search bar)
+  useEffect(() => {
+    return onHappieOpen((message) => {
+      setOpen(true);
+      setInput(message);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    });
+  }, []);
 
   // Cmd+K to toggle
   useEffect(() => {
@@ -163,7 +174,11 @@ export function Happie() {
                         : "bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text)]"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                    {msg.role === "assistant" ? (
+                      <Markdown content={msg.content} />
+                    ) : (
+                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                    )}
                   </div>
                 </div>
               ))}

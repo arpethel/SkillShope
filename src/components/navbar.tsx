@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Plus, LayoutDashboard, User, ShieldCheck } from "lucide-react";
+import { Search, Plus, LayoutDashboard, User, ShieldCheck, Sparkles } from "lucide-react";
 import { useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { openHappie } from "@/lib/happie-state";
 
 type NavbarProps = {
   user?: {
@@ -39,11 +40,25 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
             <input
               type="text"
-              placeholder="Search skills, MCP servers, agents..."
+              placeholder="Search or ask Happie..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2 pl-10 pr-4 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] transition-colors"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2 pl-10 pr-20 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] transition-colors"
             />
+            {search.trim().split(" ").length >= 3 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openHappie(search);
+                  setSearch("");
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-md bg-[var(--accent-soft)] px-2 py-1 text-[10px] font-medium text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors"
+              >
+                <Sparkles className="h-3 w-3" />
+                Ask Happie
+              </button>
+            )}
           </div>
         </form>
 
