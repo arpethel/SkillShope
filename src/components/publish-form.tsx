@@ -48,6 +48,9 @@ export function PublishForm() {
     sourceType: "github",
     compatibility: "claude-code",
     tags: "",
+    listingType: "original",
+    originalAuthor: "",
+    originalUrl: "",
   });
 
   const updateForm = (key: string, value: string | number | boolean) => {
@@ -187,6 +190,67 @@ export function PublishForm() {
           </div>
         </div>
 
+        {/* Listing Type */}
+        <div>
+          <label className="mb-2 block text-sm font-medium">Listing Type</label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => updateForm("listingType", "original")}
+              className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
+                form.listingType === "original"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                  : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
+              }`}
+            >
+              <span className="font-medium">Original</span>
+              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Your own skill</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateForm("listingType", "community")}
+              className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
+                form.listingType === "community"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                  : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
+              }`}
+            >
+              <span className="font-medium">Community</span>
+              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Curate an existing skill</p>
+            </button>
+          </div>
+        </div>
+
+        {/* Community Attribution */}
+        {form.listingType === "community" && (
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 space-y-4">
+            <p className="text-xs text-[var(--text-secondary)]">
+              Community listings link to existing open-source skills with proper attribution.
+              The original author is credited and the source URL points to their repo.
+            </p>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">Original Author</label>
+              <input
+                type="text"
+                value={form.originalAuthor}
+                onChange={(e) => updateForm("originalAuthor", e.target.value)}
+                placeholder="e.g., Anthropic"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">Original Author URL</label>
+              <input
+                type="url"
+                value={form.originalUrl}
+                onChange={(e) => updateForm("originalUrl", e.target.value)}
+                placeholder="e.g., https://github.com/anthropics"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Name */}
         <div>
           <label className="mb-1.5 block text-sm font-medium">Name</label>
@@ -266,42 +330,51 @@ export function PublishForm() {
         </div>
 
         {/* Pricing */}
-        <div>
-          <label className="mb-2 block text-sm font-medium">Pricing</label>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                checked={form.isFree}
-                onChange={() => updateForm("isFree", true)}
-                className="accent-[var(--accent)]"
-              />
-              Free
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                checked={!form.isFree}
-                onChange={() => updateForm("isFree", false)}
-                className="accent-[var(--accent)]"
-              />
-              Paid
-            </label>
-            {!form.isFree && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-[var(--text-secondary)]">$</span>
-                <input
-                  type="number"
-                  min="0.99"
-                  step="0.01"
-                  value={form.price}
-                  onChange={(e) => updateForm("price", parseFloat(e.target.value) || 0)}
-                  className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm outline-none focus:border-[var(--accent)]"
-                />
-              </div>
-            )}
+        {form.listingType === "community" ? (
+          <div>
+            <label className="mb-2 block text-sm font-medium">Pricing</label>
+            <p className="text-sm text-[var(--text-secondary)]">
+              Community listings are always free.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div>
+            <label className="mb-2 block text-sm font-medium">Pricing</label>
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  checked={form.isFree}
+                  onChange={() => updateForm("isFree", true)}
+                  className="accent-[var(--accent)]"
+                />
+                Free
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  checked={!form.isFree}
+                  onChange={() => updateForm("isFree", false)}
+                  className="accent-[var(--accent)]"
+                />
+                Paid
+              </label>
+              {!form.isFree && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-[var(--text-secondary)]">$</span>
+                  <input
+                    type="number"
+                    min="0.99"
+                    step="0.01"
+                    value={form.price}
+                    onChange={(e) => updateForm("price", parseFloat(e.target.value) || 0)}
+                    className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm outline-none focus:border-[var(--accent)]"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Source */}
         <div>
