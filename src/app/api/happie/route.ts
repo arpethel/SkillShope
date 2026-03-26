@@ -57,7 +57,16 @@ Rules:
 
 Tone: Warm, helpful, knowledgeable. Like a friend who knows every tool in the registry.`;
 
+// Global rate limit — protects against coordinated Anthropic API abuse
+const GLOBAL_HOURLY_LIMIT = 500;
+
 export async function POST(req: NextRequest) {
+  // Global rate limit across all users
+  const { allowed: globalAllowed } = rateLimit("happie:global", GLOBAL_HOURLY_LIMIT, 3600_000);
+  if (!globalAllowed) {
+    return NextResponse.json({ error: "Happie is taking a break. Try again soon." }, { status: 429 });
+  }
+
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json(

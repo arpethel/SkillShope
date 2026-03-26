@@ -34,10 +34,13 @@ export function Markdown({ content }: { content: string }) {
           </code>
         );
       } else if (match[4] && match[5]) {
-        // Link
+        // Link — block javascript:, data:, vbscript: protocols
         const href = match[5];
-        const isInternal = href.startsWith("/");
-        if (isInternal) {
+        const isSafe = /^(https?:\/\/|\/[^/])/.test(href);
+        if (!isSafe) {
+          // Render as plain text, not a link
+          parts.push(match[4]);
+        } else if (href.startsWith("/")) {
           parts.push(
             <Link key={`l${match.index}`} href={href} className="text-[var(--accent)] hover:underline">
               {match[4]}
