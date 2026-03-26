@@ -30,6 +30,22 @@ body {
   font-family: var(--font-hero), serif;
 }
 
+[data-theme="light"] {
+  --bg: #D1D2BD;
+  --bg-secondary: #C5C6AE;
+  --bg-card: #E0E1CE;
+  --bg-card-hover: #D8D9C6;
+  --border: #B0B19E;
+  --text: #1a1e1b;
+  --text-secondary: #4a4e4b;
+  --accent: #3a4d3e;
+  --accent-hover: #2d3d30;
+  --accent-soft: rgba(58, 77, 62, 0.15);
+  --green: #16803c;
+  --yellow: #a17408;
+  --blue: #2563eb;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--text);
@@ -37,4 +53,8 @@ body {
 
 .text-white {
   color: #D1D2BD !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #1a1e1b !important;
 }

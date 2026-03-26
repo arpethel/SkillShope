@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Plus, LayoutDashboard, User, ShieldCheck, Menu, X } from "lucide-react";
 import { useState, ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./theme-toggle";
 
 type NavbarProps = {
   user?: {
@@ -34,6 +35,7 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
           <Link href="/bundles" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">Bundles</Link>
           <Link href="/docs" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">Docs</Link>
           <Link href="/about" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">About</Link>
+          <ThemeToggle />
 
           {user ? (
             <>
@@ -73,13 +75,16 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
           )}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMobileNav(!mobileNav)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg md:hidden text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors"
-        >
-          {mobileNav ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileNav(!mobileNav)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors"
+          >
+            {mobileNav ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
 
       </div>
 
