@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { randomBytes } from "crypto";
 import Stripe from "stripe";
 import { DOWNLOAD_TOKEN_EXPIRY_DAYS } from "@/lib/constants";
+import { auditInfo, auditCritical } from "@/lib/audit";
 
 function generateToken(): string {
   return randomBytes(32).toString("hex");
@@ -26,8 +27,11 @@ export async function POST(req: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch {
+    auditCritical("webhook.signature_failed", { metadata: { ip: req.headers.get("x-forwarded-for") } });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
+
+  auditInfo("webhook.received", { metadata: { eventType: event.type, eventId: event.id } });
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
@@ -55,6 +59,12 @@ export async function POST(req: NextRequest) {
           expiresAt: new Date(Date.now() + DOWNLOAD_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000),
         },
         update: {},
+      });
+
+      auditInfo("checkout.completed", {
+        userId,
+        skillId,
+        metadata: { amount: (session.amount_total || 0) / 100, sessionId: session.id },
       });
     }
   }
