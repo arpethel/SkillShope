@@ -149,7 +149,7 @@ export function Happie({ isSignedIn = false }: { isSignedIn?: boolean }) {
           style={{ WebkitTapHighlightColor: "transparent" }}
           title="Ask Happie (⌘K)"
         >
-          <Logo width={28} height={28} alt="Happie" />
+          <img src="/logo-dark.svg" alt="Happie" width={28} height={28} />
         </button>
       )}
 
