@@ -98,9 +98,12 @@ export function Starfield() {
           star.x = Math.random() * w;
         }
 
+        const isLight = document.documentElement.getAttribute("data-theme") === "light";
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(209, 210, 189, ${star.opacity})`;
+        ctx.fillStyle = isLight
+          ? `rgba(58, 77, 62, ${star.opacity * 0.5})`
+          : `rgba(209, 210, 189, ${star.opacity})`;
         ctx.fill();
       }
 
@@ -120,9 +123,12 @@ export function Starfield() {
         const tailX = s.x - Math.cos(s.angle) * s.length;
         const tailY = s.y - Math.sin(s.angle) * s.length;
 
+        const isLightShoot = document.documentElement.getAttribute("data-theme") === "light";
+        const starRgb = isLightShoot ? "58, 77, 62" : "209, 210, 189";
+
         const gradient = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
-        gradient.addColorStop(0, `rgba(209, 210, 189, 0)`);
-        gradient.addColorStop(1, `rgba(209, 210, 189, ${s.opacity * 0.8})`);
+        gradient.addColorStop(0, `rgba(${starRgb}, 0)`);
+        gradient.addColorStop(1, `rgba(${starRgb}, ${s.opacity * 0.8})`);
 
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
@@ -134,7 +140,7 @@ export function Starfield() {
         // Bright head
         ctx.beginPath();
         ctx.arc(s.x, s.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(209, 210, 189, ${s.opacity})`;
+        ctx.fillStyle = `rgba(${starRgb}, ${s.opacity})`;
         ctx.fill();
 
         if (s.life >= s.maxLife) {
