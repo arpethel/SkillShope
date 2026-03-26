@@ -11,6 +11,7 @@ import {
   Check,
   X,
   Package,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -70,6 +71,7 @@ export function DashboardClient({
   const searchParams = useSearchParams();
   const purchasedSlug = searchParams.get("purchased");
   const [showBanner, setShowBanner] = useState(!!purchasedSlug);
+  const [skillSearch, setSkillSearch] = useState("");
 
   const purchasedSkill = purchasedSlug
     ? purchases.find((p) => p.skillSlug === purchasedSlug) ?? {
@@ -163,7 +165,21 @@ export function DashboardClient({
 
       {/* Your Skills */}
       <div className="mt-8">
-        <h2 className="mb-4 text-lg font-semibold">Your Skills</h2>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold">Your Skills</h2>
+          {skills.length > 0 && (
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-secondary)]" />
+              <input
+                type="text"
+                value={skillSearch}
+                onChange={(e) => setSkillSearch(e.target.value)}
+                placeholder="Filter skills..."
+                className="w-48 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-1.5 pl-8 pr-3 text-xs text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+          )}
+        </div>
         {skills.length === 0 ? (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-12 text-center">
             <Package className="mx-auto mb-3 h-8 w-8 text-[var(--text-secondary)]" />
@@ -192,7 +208,7 @@ export function DashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {skills.map((skill) => {
+                {skills.filter((s) => !skillSearch || s.name.toLowerCase().includes(skillSearch.toLowerCase())).map((skill) => {
                   const Icon = typeIcons[skill.type] || Terminal;
                   return (
                     <tr
