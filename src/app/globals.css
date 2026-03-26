@@ -31,11 +31,11 @@ body {
 }
 
 [data-theme="light"] {
-  --bg: #D1D2BD;
-  --bg-secondary: #C5C6AE;
-  --bg-card: #E0E1CE;
-  --bg-card-hover: #D8D9C6;
-  --border: #B0B19E;
+  --bg: #EFEDE5;
+  --bg-secondary: #E5E3DB;
+  --bg-card: #F5F4EE;
+  --bg-card-hover: #EEECE4;
+  --border: #D5D3CA;
   --text: #1a1e1b;
   --text-secondary: #4a4e4b;
   --accent: #3a4d3e;
