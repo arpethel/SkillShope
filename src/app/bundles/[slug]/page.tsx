@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, Terminal, Server, Bot, ShieldCheck, Shield } from "lucide-react";
+import { BundleBuyButton } from "@/components/bundle-buy-button";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -27,6 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BundleDetailPage({ params }: Props) {
   const { slug } = await params;
+  const session = await auth();
 
   const bundle = await prisma.bundle.findUnique({
     where: { slug },
@@ -110,9 +113,18 @@ export default async function BundleDetailPage({ params }: Props) {
               )}
             </span>
           </div>
-          <pre className="overflow-x-auto rounded-lg bg-[var(--bg-secondary)] px-4 py-3 text-xs text-[var(--green)]">
+          <pre className="mb-4 overflow-x-auto rounded-lg bg-[var(--bg-secondary)] px-4 py-3 text-xs text-[var(--green)]">
             {installCmds}
           </pre>
+          {!bundle.isFree && (
+            <BundleBuyButton
+              bundleId={bundle.id}
+              price={bundle.price}
+              isFree={bundle.isFree}
+              isSignedIn={!!session?.user}
+              allOwned={false}
+            />
+          )}
         </div>
 
         {/* Skills list */}
