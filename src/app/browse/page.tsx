@@ -80,6 +80,7 @@ export default async function BrowsePage({ searchParams }: Props) {
           name: c.category,
           count: c._count,
         }))}
+        currentQuery={q}
         currentCategory={category}
         currentType={type}
         currentSort={sort}
