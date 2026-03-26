@@ -70,7 +70,8 @@ export default function SignInPage() {
         </form>
 
         <p className="mt-6 text-center text-xs text-[var(--text-secondary)]">
-          By signing in, you agree to our terms of service.
+          By signing in, you agree to our{" "}
+          <Link href="/terms" className="text-[var(--accent)] hover:underline">terms of service</Link>.
         </p>
       </div>
     </div>
