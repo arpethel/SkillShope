@@ -97,7 +97,7 @@ export function SkillCard(props: SkillCardProps) {
 
   return (
     <Link href={`/skills/${props.slug}`}>
-      <div className="group relative flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all hover:border-[var(--accent)]/40 hover:bg-[var(--bg-card-hover)]">
+      <div className="card-hover group relative flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all hover:border-[var(--accent)]/40 hover:bg-[var(--bg-card-hover)]">
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent-soft)]">
