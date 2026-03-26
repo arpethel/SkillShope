@@ -84,8 +84,8 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
         {/* Mobile nav overlay */}
         {mobileNav && (
           <>
-            <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden" onClick={() => setMobileNav(false)} />
-            <div className="fixed right-0 top-16 z-50 w-64 border-l border-[var(--border)] bg-[var(--bg)] p-4 md:hidden" style={{ height: "calc(100dvh - 4rem)" }}>
+            <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm md:hidden" onClick={() => setMobileNav(false)} />
+            <div className="fixed right-0 top-16 z-[70] w-64 border-l border-[var(--border)] bg-[var(--bg)] p-4 md:hidden" style={{ height: "calc(100dvh - 4rem)" }}>
               <nav className="space-y-1">
                 {[
                   { href: "/browse", label: "Browse" },
