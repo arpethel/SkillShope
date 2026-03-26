@@ -6,6 +6,33 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic();
 
+// Cache skill catalog for 5 minutes — reduces DB queries and token costs
+let catalogCache: { data: string; expiresAt: number } | null = null;
+
+async function getCachedCatalog(): Promise<string> {
+  if (catalogCache && Date.now() < catalogCache.expiresAt) {
+    return catalogCache.data;
+  }
+
+  const skills = await prisma.skill.findMany({
+    where: { reviewStatus: { in: ["approved", "pending"] } },
+    select: {
+      slug: true, name: true, description: true, type: true,
+      tags: true, isFree: true, price: true, installCmd: true,
+      listingType: true, originalAuthor: true,
+    },
+    orderBy: { downloads: "desc" },
+    take: 100,
+  });
+
+  const data = skills
+    .map((s) => `- ${s.name} (${s.slug}) [${s.type}] — ${s.description} | ${s.isFree ? "Free" : `$${s.price}`} | Install: ${s.installCmd || `npx skillshope install ${s.slug}`}${s.listingType === "community" ? ` | By: ${s.originalAuthor}` : ""}`)
+    .join("\n");
+
+  catalogCache = { data, expiresAt: Date.now() + 5 * 60 * 1000 };
+  return data;
+}
+
 const SYSTEM_PROMPT = `You are Happie, the AI assistant for Skill Shope — a marketplace and registry for AI skills, MCP servers, and agent configurations.
 
 Your role:
@@ -51,30 +78,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Message is required (max 2000 chars)" }, { status: 400 });
   }
 
-  // Fetch skill catalog for context
-  const skills = await prisma.skill.findMany({
-    select: {
-      slug: true,
-      name: true,
-      description: true,
-      type: true,
-      category: true,
-      tags: true,
-      isFree: true,
-      price: true,
-      compatibility: true,
-      verified: true,
-      listingType: true,
-      originalAuthor: true,
-      installCmd: true,
-    },
-    orderBy: { downloads: "desc" },
-    take: 100,
-  });
-
-  const catalogContext = skills
-    .map((s) => `- ${s.name} (${s.slug}) [${s.type}] — ${s.description} | Tags: ${s.tags || "none"} | ${s.isFree ? "Free" : `$${s.price}`} | Install: ${s.installCmd || `npx skillshope install ${s.slug}`}${s.listingType === "community" ? ` | By: ${s.originalAuthor}` : ""}`)
-    .join("\n");
+  // Fetch skill catalog (cached for 5 min to reduce DB + token costs)
+  const catalogContext = await getCachedCatalog();
 
   // Build user context
   let userContext = "";
