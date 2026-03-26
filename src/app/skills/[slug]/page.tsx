@@ -87,8 +87,28 @@ export default async function SkillPage({ params }: Props) {
   }
 
   const TypeIcon = typeIcons[skill.type] || Terminal;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://skillshope.com";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: skill.name,
+    description: skill.description,
+    url: `${siteUrl}/skills/${skill.slug}`,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Any",
+    offers: skill.isFree
+      ? { "@type": "Offer", price: "0", priceCurrency: "USD" }
+      : { "@type": "Offer", price: skill.price.toFixed(2), priceCurrency: "USD" },
+    aggregateRating: skill.reviewCount > 0
+      ? { "@type": "AggregateRating", ratingValue: skill.rating.toFixed(1), reviewCount: skill.reviewCount }
+      : undefined,
+    ...(skill.githubStars ? { interactionStatistic: { "@type": "InteractionCounter", interactionType: "https://schema.org/LikeAction", userInteractionCount: skill.githubStars } } : {}),
+  };
 
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <Link
         href="/browse"
@@ -369,5 +389,6 @@ export default async function SkillPage({ params }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
