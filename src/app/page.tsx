@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal } from "@/components/reveal";
 import {
   ArrowRight,
   Terminal,
@@ -98,6 +99,7 @@ export default async function HomePage() {
       {/* Featured Skills */}
       {featuredSkills.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+          <Reveal>
           <div className="mb-8 flex items-center justify-between">
             <h2 className="font-display text-2xl font-bold">Featured Skills</h2>
             <Link
@@ -136,11 +138,13 @@ export default async function HomePage() {
               />
             ))}
           </div>
+          </Reveal>
         </section>
       )}
 
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <Reveal>
         <h2 className="font-display mb-8 text-2xl font-bold">Browse by Category</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => (
@@ -159,11 +163,13 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+        </Reveal>
       </section>
 
       {/* FAQ */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+          <Reveal>
           <h2 className="font-display mb-8 text-center text-2xl font-bold">
             Common questions
           </h2>
@@ -212,11 +218,13 @@ export default async function HomePage() {
               See the full FAQ
             </Link>
           </p>
+          </Reveal>
         </div>
       </section>
 
       {/* CTA */}
       <section className="border-t border-[var(--border)]">
+        <Reveal>
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="font-display mb-4 text-3xl font-bold">
@@ -235,6 +243,7 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+        </Reveal>
       </section>
 
       {/* Footer */}

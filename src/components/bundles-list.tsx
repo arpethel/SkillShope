@@ -101,7 +101,7 @@ export function BundlesList({ bundles }: { bundles: Bundle[] }) {
 
             return (
               <Link key={bundle.id} href={`/bundles/${bundle.slug}`}>
-                <div className="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all hover:border-[var(--accent)]/40 hover:bg-[var(--bg-card-hover)]">
+                <div className="card-hover group flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all hover:border-[var(--accent)]/40 hover:bg-[var(--bg-card-hover)]">
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
