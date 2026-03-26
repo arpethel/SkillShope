@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Plus, LayoutDashboard, User, ShieldCheck, Sparkles, Menu, X } from "lucide-react";
+import { Plus, LayoutDashboard, User, ShieldCheck, Menu, X } from "lucide-react";
 import { useState, ReactNode } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { openHappie } from "@/lib/happie-state";
+import { usePathname } from "next/navigation";
 
 type NavbarProps = {
   user?: {
@@ -17,18 +16,9 @@ type NavbarProps = {
 };
 
 export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
-  const [search, setSearch] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      router.push(`/browse?q=${encodeURIComponent(search.trim())}`);
-    }
-  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-xl">
@@ -37,36 +27,6 @@ export function Navbar({ user, isAdmin, signOutButton }: NavbarProps) {
           <Image src="/logo.png" alt="Skill Shope" width={32} height={32} />
         </Link>
 
-        {pathname === "/" && (
-          <div className="hidden sm:flex flex-1 max-w-md items-center gap-2">
-            <form onSubmit={handleSearch} className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
-              <input
-                type="text"
-                placeholder="Search skills..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2 pl-10 pr-4 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] transition-colors"
-              />
-            </form>
-            <button
-              type="button"
-              onClick={() => {
-                if (search.trim()) {
-                  openHappie(search);
-                  setSearch("");
-                } else {
-                  openHappie("");
-                }
-              }}
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 text-xs text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--text)] transition-colors"
-              title="Ask Happie (⌘K)"
-            >
-              <Image src="/logo.png" alt="Happie" width={16} height={16} />
-              <span className="hidden lg:inline">Happie</span>
-            </button>
-          </div>
-        )}
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-3">
