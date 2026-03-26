@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   Terminal,
@@ -15,6 +14,7 @@ import { SkillCard } from "@/components/skill-card";
 import { Starfield } from "@/components/starfield";
 import { Aurora } from "@/components/aurora";
 import { HeroSearch } from "@/components/hero-search";
+import { Logo } from "@/components/logo";
 
 export default async function HomePage() {
   const featuredSkills = await prisma.skill.findMany({
@@ -244,7 +244,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="Skill Shope" width={20} height={20} />
+              <Logo width={20} height={20} />
               <span className="text-sm text-[var(--text-secondary)]">
                 &copy; 2026 Skill Shope
               </span>
