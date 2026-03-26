@@ -12,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { timingSafeEqual } from "crypto";
 import { rateLimit } from "@/lib/rate-limit";
+import { auditInfo, auditWarn } from "@/lib/audit";
 
 export async function GET(
   req: NextRequest,
@@ -72,6 +73,7 @@ export async function GET(
     }
 
     if (!authorized) {
+      auditWarn("deliver.denied", { skillId, metadata: { reason: "unauthorized" } });
       return NextResponse.json(
         { error: "Purchase required", purchaseUrl: `/skills/${skill.slug}` },
         { status: 403 }
@@ -103,6 +105,8 @@ export async function GET(
       data: { skillId, source: source.slice(0, 20) },
     }),
   ]);
+
+  auditInfo("deliver.success", { skillId, metadata: { source, fileCount: files.length } });
 
   return NextResponse.json({ files });
 }

@@ -5,8 +5,8 @@ import { stripe } from "@/lib/stripe";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSafeOrigin } from "@/lib/origin";
 import Stripe from "stripe";
-
-const PLATFORM_FEE_PERCENT = 15;
+import { PLATFORM_FEE_PERCENT } from "@/lib/constants";
+import { auditInfo, auditWarn } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -83,6 +83,12 @@ export async function POST(req: NextRequest) {
   }
 
   const checkoutSession = await stripe.checkout.sessions.create(params);
+
+  auditInfo("checkout.started", {
+    userId: session.user.id,
+    skillId,
+    metadata: { amount: skill.price, sessionId: checkoutSession.id },
+  });
 
   return NextResponse.json({ url: checkoutSession.url });
 }

@@ -1,9 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Search, X } from "lucide-react";
 
 type Props = {
   categories: { name: string; count: number }[];
+  currentQuery?: string;
   currentCategory?: string;
   currentType?: string;
   currentSort?: string;
@@ -12,6 +15,7 @@ type Props = {
 
 export function SearchFilters({
   categories,
+  currentQuery,
   currentCategory,
   currentType,
   currentSort,
@@ -19,6 +23,17 @@ export function SearchFilters({
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [query, setQuery] = useState(currentQuery || "");
+
+  // Clean URL on mount — remove ?q= but keep the search term in state
+  useEffect(() => {
+    if (currentQuery) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("q");
+      const clean = params.toString();
+      window.history.replaceState({}, "", clean ? `/browse?${clean}` : "/browse");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function updateParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
@@ -27,11 +42,49 @@ export function SearchFilters({
     } else {
       params.delete(key);
     }
+    // Keep q out of URL
+    params.delete("q");
     router.push(`/browse?${params.toString()}`);
   }
 
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/browse?q=${encodeURIComponent(query.trim())}`);
+    } else {
+      router.push("/browse");
+    }
+  }
+
+  function clearSearch() {
+    setQuery("");
+    router.push("/browse");
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="space-y-3">
+      {/* Search input on browse page */}
+      <form onSubmit={handleSearch} className="relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search skills, MCP servers, agents..."
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2.5 pl-10 pr-10 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] transition-colors"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </form>
+
+      <div className="flex flex-wrap items-center gap-3">
       {/* Type filter */}
       <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
         {[
@@ -102,6 +155,7 @@ export function SearchFilters({
         <option value="price-low">Price: Low to High</option>
         <option value="price-high">Price: High to Low</option>
       </select>
+    </div>
     </div>
   );
 }

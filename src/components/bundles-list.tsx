@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Package, ArrowRight, ShieldCheck } from "lucide-react";
+import { Package, ArrowRight, ShieldCheck, Search, X } from "lucide-react";
 
 type BundleSkill = {
   slug: string;
@@ -28,10 +28,15 @@ type Bundle = {
 
 export function BundlesList({ bundles }: { bundles: Bundle[] }) {
   const [filter, setFilter] = useState<"all" | "free" | "premium">("all");
+  const [query, setQuery] = useState("");
 
   const filtered = bundles.filter((b) => {
-    if (filter === "free") return b.isFree;
-    if (filter === "premium") return !b.isFree;
+    if (filter === "free" && !b.isFree) return false;
+    if (filter === "premium" && b.isFree) return false;
+    if (query) {
+      const q = query.toLowerCase();
+      return b.name.toLowerCase().includes(q) || b.description.toLowerCase().includes(q);
+    }
     return true;
   });
 
@@ -42,6 +47,23 @@ export function BundlesList({ bundles }: { bundles: Bundle[] }) {
         <p className="mt-2 text-[var(--text-secondary)]">
           Curated collections designed to work together. Install an entire stack in one go.
         </p>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search bundles..."
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2.5 pl-10 pr-10 text-sm text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] transition-colors"
+        />
+        {query && (
+          <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text)]">
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Filter */}

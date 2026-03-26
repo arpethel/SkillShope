@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 
 const NAV_ITEMS = [
   { title: "Getting Started", href: "/docs" },
@@ -20,10 +20,14 @@ const NAV_ITEMS = [
   { title: "FAQ", href: "/docs/faq" },
 ];
 
-function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+function NavLinks({ pathname, onNavigate, filter }: { pathname: string; onNavigate?: () => void; filter?: string }) {
+  const items = filter
+    ? NAV_ITEMS.filter((item) => item.title.toLowerCase().includes(filter.toLowerCase()))
+    : NAV_ITEMS;
+
   return (
     <nav className="space-y-1">
-      {NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         const isActive = pathname === item.href;
         return (
           <Link
@@ -47,6 +51,7 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
 export function DocsSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [docSearch, setDocSearch] = useState("");
 
   return (
     <>
@@ -83,10 +88,17 @@ export function DocsSidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 md:block">
         <div className="sticky top-24">
-          <span className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-            Documentation
-          </span>
-          <NavLinks pathname={pathname} />
+          <div className="relative mb-3">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-secondary)]" />
+            <input
+              type="text"
+              value={docSearch}
+              onChange={(e) => setDocSearch(e.target.value)}
+              placeholder="Search docs..."
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-1.5 pl-8 pr-3 text-xs text-[var(--text)] placeholder:text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+            />
+          </div>
+          <NavLinks pathname={pathname} filter={docSearch} />
         </div>
       </aside>
     </>

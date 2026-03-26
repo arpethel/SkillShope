@@ -272,3 +272,16 @@ model BundleSkill {
 
   @@unique([bundleId, skillId])
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  type      String   // checkout.started | checkout.completed | checkout.failed | webhook.received | webhook.failed | deliver.success | deliver.denied | review.created | publish.created
+  severity  String   @default("info") // info | warn | critical
+  userId    String?
+  skillId   String?
+  metadata  String?  // JSON stringified details
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([severity, createdAt])
+}
