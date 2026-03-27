@@ -8,6 +8,7 @@ import { SignOutButton } from "@/components/sign-out-button";
 import { Analytics } from "@vercel/analytics/next";
 import { ConsentBanner } from "@/components/consent-banner";
 import { Happie } from "@/components/happie";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 import { Space_Grotesk, Jacques_Francois } from "next/font/google";
 
 const jacquesFrancois = Jacques_Francois({
@@ -33,7 +34,9 @@ export const metadata: Metadata = {
   description:
     "Discover, review, and install AI skills, MCP servers, and agent configurations. The registry for the agentic era.",
   metadataBase: new URL(siteUrl),
-  icons: { icon: "/logo-dark.svg" },
+  manifest: "/manifest.json",
+  icons: { icon: "/logo-dark.svg", apple: "/icons/icon-192x192.png" },
+  other: { "mobile-web-app-capable": "yes", "apple-mobile-web-app-capable": "yes", "apple-mobile-web-app-status-bar-style": "black-translucent" },
   openGraph: {
     type: "website",
     siteName: "Skill Shope",
@@ -79,6 +82,7 @@ export default async function RootLayout({
         <main>{children}</main>
         <Happie isSignedIn={!!session?.user} />
         <Analytics />
+        <ServiceWorkerRegister />
         <ConsentBanner />
       </body>
     </html>
