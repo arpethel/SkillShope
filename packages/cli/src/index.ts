@@ -5,7 +5,7 @@ import { login } from "./commands/login.js";
 import { whoami } from "./commands/whoami.js";
 import { list } from "./commands/list.js";
 
-const VERSION = "0.2.0";
+const VERSION = "0.2.1";
 
 function help(): void {
   console.log(`
