@@ -219,7 +219,7 @@ export default async function HomePage() {
               The giants keep zero.
             </p>
             <p className="mb-8 text-sm text-[var(--text-secondary)]">
-              Free to publish. No approval queue. Live in minutes.
+              Free to publish. Security scanned. Live in minutes.
             </p>
             <Link
               href="/publish"

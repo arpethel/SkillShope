@@ -61,7 +61,7 @@ export default function AboutPage() {
         <p className="leading-relaxed text-[var(--text-secondary)]">
           Skill Shope is the independent registry where creators set their price,
           keep their IP, and get 85% of every sale. One-command installs. Security
-          scanning. Download token protection. No approval queues. No vendor lock-in.
+          scanning. Download token protection. Security scanned on publish. No vendor lock-in.
           Your work earns what it deserves.
         </p>
       </div>
