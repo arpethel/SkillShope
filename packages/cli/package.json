@@ -1,6 +1,6 @@
 {
   "name": "skillshope",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Install AI skills, MCP servers, and agents from Skill Shope",
   "bin": {
     "skillshope": "./dist/index.js"
