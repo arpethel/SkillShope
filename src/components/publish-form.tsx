@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Terminal, Server, Bot, Upload, Github, Package, Globe, FileUp, Loader2 } from "lucide-react";
+import { Terminal, Server, Bot, Upload, Github, Package, Globe, FileUp, Loader2, ShieldCheck, ShieldAlert } from "lucide-react";
 
 const categories = [
   "code-review",
@@ -33,6 +33,9 @@ export function PublishForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verified, setVerified] = useState<boolean | null>(null);
+  const [verifyMessage, setVerifyMessage] = useState("");
   const [error, setError] = useState("");
   const [skillContent, setSkillContent] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
@@ -138,6 +141,8 @@ export function PublishForm() {
     }
     setImporting(true);
     setError("");
+    setVerified(null);
+    setVerifyMessage("");
     try {
       const res = await fetch("/api/github-import", {
         method: "POST",
@@ -161,14 +166,43 @@ export function PublishForm() {
         sourceUrl: data.sourceUrl || prev.sourceUrl,
         sourceType: "github",
         tags: data.tags || prev.tags,
+        listingType: "community", // Default to community until verified
+        originalAuthor: data.owner || "",
+        originalUrl: data.sourceUrl || "",
         ...(data.category ? { category: data.category } : {}),
       }));
       if (data.skillContent) setSkillContent(data.skillContent);
-      setGithubUrl("");
     } catch {
       setError("Failed to import from GitHub");
     } finally {
       setImporting(false);
+    }
+  };
+
+  const handleVerifyOwnership = async () => {
+    const urlToVerify = githubUrl || form.sourceUrl;
+    if (!urlToVerify) return;
+    setVerifying(true);
+    setVerifyMessage("");
+    try {
+      const res = await fetch("/api/github-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlToVerify }),
+      });
+      const data = await res.json();
+      setVerified(data.verified);
+      setVerifyMessage(data.message || "");
+      if (data.verified) {
+        setForm((prev) => ({ ...prev, listingType: "original", originalAuthor: "", originalUrl: "" }));
+      } else {
+        setForm((prev) => ({ ...prev, listingType: "community" }));
+      }
+    } catch {
+      setVerified(false);
+      setVerifyMessage("Verification failed. Try again later.");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -206,6 +240,34 @@ export function PublishForm() {
         <p className="mt-1.5 text-center text-xs text-[var(--text-secondary)]">
           Paste a GitHub repo URL to auto-fill name, description, tags, and SKILL.md content.
         </p>
+
+        {/* Ownership verification — shown after import or when source URL is a GitHub link */}
+        {(form.sourceUrl.includes("github.com") && verified === null) && (
+          <button
+            type="button"
+            onClick={handleVerifyOwnership}
+            disabled={verifying}
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-soft)] py-2.5 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors disabled:opacity-50"
+          >
+            {verifying ? (
+              <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Verifying ownership...</>
+            ) : (
+              <><ShieldCheck className="h-3.5 w-3.5" /> Is this yours? Please verify</>
+            )}
+          </button>
+        )}
+        {verified === true && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-[var(--green)]/30 bg-[var(--green)]/5 px-3 py-2 text-xs text-[var(--green)]">
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+            {verifyMessage}
+          </div>
+        )}
+        {verified === false && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-[var(--yellow)]/30 bg-[var(--yellow)]/5 px-3 py-2 text-xs text-[var(--yellow)]">
+            <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+            {verifyMessage}
+          </div>
+        )}
       </div>
 
       {/* JSON Upload */}
@@ -264,32 +326,44 @@ export function PublishForm() {
         {/* Listing Type */}
         <div>
           <label className="mb-2 block text-sm font-medium">Listing Type</label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => updateForm("listingType", "original")}
-              className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
-                form.listingType === "original"
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                  : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
-              }`}
-            >
-              <span className="font-medium">Original</span>
-              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Your own skill</p>
-            </button>
-            <button
-              type="button"
-              onClick={() => updateForm("listingType", "community")}
-              className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
-                form.listingType === "community"
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                  : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
-              }`}
-            >
-              <span className="font-medium">Community</span>
-              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Curate an existing skill</p>
-            </button>
-          </div>
+          {/* Lock to community if source is GitHub and not verified */}
+          {form.sourceUrl.includes("github.com") && verified !== true ? (
+            <div>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center text-sm">
+                <span className="font-medium">Community</span>
+                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+                  Verify ownership above to list as Original
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => updateForm("listingType", "original")}
+                className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
+                  form.listingType === "original"
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                    : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
+                }`}
+              >
+                <span className="font-medium">Original</span>
+                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Your own skill</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => updateForm("listingType", "community")}
+                className={`flex-1 rounded-xl border p-3 text-center text-sm transition-all ${
+                  form.listingType === "community"
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                    : "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--accent)]/40"
+                }`}
+              >
+                <span className="font-medium">Community</span>
+                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Curate an existing skill</p>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Community Attribution */}
