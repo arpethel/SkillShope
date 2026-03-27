@@ -74,8 +74,15 @@ export function PublishForm() {
     }
   };
 
+  // Block publish if GitHub source URL and not verified
+  const needsVerification = form.sourceUrl.includes("github.com") && verified === null;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (needsVerification) {
+      setError("Please verify ownership of the GitHub repository before publishing.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -605,7 +612,7 @@ export function PublishForm() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || needsVerification}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3.5 text-base font-semibold text-white hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
         >
           <Upload className="h-5 w-5" />
