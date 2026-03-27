@@ -17,7 +17,6 @@ export function Happie({ isSignedIn = false }: { isSignedIn?: boolean }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [generatedSkill, setGeneratedSkill] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,42 +91,6 @@ export function Happie({ isSignedIn = false }: { isSignedIn?: boolean }) {
     setLoading(false);
   };
 
-  const generateSkill = async () => {
-    setGenerating(true);
-    setGeneratedSkill(null);
-    try {
-      const res = await fetch("/api/happie/generate-skill", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, projectName: "My Project" }),
-      });
-      const data = await res.json();
-      if (data.requiresAuth) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content:
-              "I can create a tailored SKILL.md for your project from our conversation! [Create an account or sign in](/auth/signin) so we can get started.",
-          },
-        ]);
-      } else if (data.skill) {
-        setGeneratedSkill(data.skill);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.error || "Couldn't generate the skill. Try again." },
-        ]);
-      }
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Couldn't generate the skill. Try again." },
-      ]);
-    }
-    setGenerating(false);
-  };
-
   const downloadSkill = () => {
     if (!generatedSkill) return;
     const blob = new Blob([generatedSkill], { type: "text/markdown" });
@@ -197,7 +160,7 @@ export function Happie({ isSignedIn = false }: { isSignedIn?: boolean }) {
                   <p className="mb-2 text-sm font-medium">Happie to Help!</p>
                   <p className="mb-4 text-xs leading-relaxed text-[var(--text-secondary)]">
                     I can recommend the perfect skills, MCP servers, and agents
-                    for your project — and even generate a tailored SKILL.md just for you.
+                    for your project.
                   </p>
                   <a
                     href="/auth/signin"
@@ -268,26 +231,16 @@ export function Happie({ isSignedIn = false }: { isSignedIn?: boolean }) {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Generate skill / Download — fixed above input */}
+            {/* Generate skill — disabled, coming soon for premium */}
             {messages.length >= 2 && !generatedSkill && (
               <div className="shrink-0 border-t border-[var(--border)] px-4 py-2">
                 <button
-                  onClick={generateSkill}
-                  disabled={generating}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-soft)] py-2.5 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent)]/20 active:bg-[var(--accent)]/30 transition-colors disabled:opacity-50"
+                  disabled
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] py-2.5 text-xs font-medium text-[var(--text-secondary)] cursor-not-allowed opacity-60"
                   style={{ WebkitTapHighlightColor: "transparent" }}
                 >
-                  {generating ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Generating your skill...
-                    </>
-                  ) : (
-                    <>
-                      <FileCode className="h-3.5 w-3.5" />
-                      Generate a SKILL.md for my project
-                    </>
-                  )}
+                  <FileCode className="h-3.5 w-3.5" />
+                  Generate a SKILL.md — coming soon for premium
                 </button>
               </div>
             )}
