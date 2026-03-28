@@ -285,12 +285,12 @@ export function EditSkillForm(initial: Props) {
 
         {/* Actions */}
         <div className="flex items-center justify-between border-t border-[var(--border)] pt-6">
-          <Link
-            href="/dashboard"
+          <button
+            onClick={() => router.push("/dashboard")}
             className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:border-[var(--accent)]/40 transition-colors"
           >
             Done Editing
-          </Link>
+          </button>
           <button
             onClick={handleSave}
             disabled={saving}
