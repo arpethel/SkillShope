@@ -39,7 +39,6 @@ export function EditSkillForm(initial: Props) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [saved, setSaved] = useState(false);
 
   const [name, setName] = useState(initial.name);
   const [description, setDescription] = useState(initial.description);
@@ -56,7 +55,6 @@ export function EditSkillForm(initial: Props) {
   const handleSave = async () => {
     setSaving(true);
     setError("");
-    setSaved(false);
     try {
       const res = await fetch(`/api/skills/${initial.id}`, {
         method: "PATCH",
@@ -67,8 +65,7 @@ export function EditSkillForm(initial: Props) {
         }),
       });
       if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
+        router.push("/dashboard");
       } else {
         const data = await res.json();
         setError(data.error || "Failed to save changes");
@@ -286,11 +283,14 @@ export function EditSkillForm(initial: Props) {
           </div>
         )}
 
-        {/* Save */}
+        {/* Actions */}
         <div className="flex items-center justify-between border-t border-[var(--border)] pt-6">
-          <div>
-            {saved && <span className="text-sm text-[var(--green)]">Changes saved</span>}
-          </div>
+          <Link
+            href="/dashboard"
+            className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:border-[var(--accent)]/40 transition-colors"
+          >
+            Done Editing
+          </Link>
           <button
             onClick={handleSave}
             disabled={saving}
