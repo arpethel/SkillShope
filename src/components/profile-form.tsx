@@ -218,7 +218,8 @@ export function ProfileForm({ name: initialName, email, image, bio: initialBio, 
             <h2 className="text-sm font-semibold">API Keys</h2>
           </div>
           <p className="mb-4 text-xs text-[var(--text-secondary)]">
-            Use API keys to authenticate the CLI and API. Keys are shown once when created — save them securely.
+            Use API keys to authenticate the CLI and API. Keys are shown once when created — save them securely.{" "}
+            <a href="/docs/api-reference#api-keys" className="text-[var(--accent)] hover:underline">What&apos;s this for?</a>
           </p>
 
           {/* New key created — show once */}
