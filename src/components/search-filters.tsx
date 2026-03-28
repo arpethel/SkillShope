@@ -13,6 +13,7 @@ type Props = {
   currentListing?: string;
   currentOwned?: string;
   currentView?: string;
+  currentPricing?: string;
   isSignedIn?: boolean;
 };
 
@@ -25,6 +26,7 @@ export function SearchFilters({
   currentListing,
   currentOwned,
   currentView,
+  currentPricing,
   isSignedIn,
 }: Props) {
   const router = useRouter();
@@ -154,6 +156,27 @@ export function SearchFilters({
           </button>
         ))}
       </div>}
+
+      {/* Pricing filter */}
+      <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
+        {[
+          { label: "All", value: "" },
+          { label: "Free", value: "free" },
+          { label: "Premium", value: "premium" },
+        ].map((p) => (
+          <button
+            key={p.value}
+            onClick={() => updateParam("pricing", p.value || null)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              (currentPricing || "") === p.value
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+            }`}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
 
       {/* My Purchases toggle */}
       {isSignedIn && (

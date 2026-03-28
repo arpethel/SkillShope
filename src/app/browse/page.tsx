@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ q?: string; category?: string; type?: string; sort?: string; listing?: string; owned?: string; view?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; type?: string; sort?: string; listing?: string; owned?: string; view?: string; pricing?: string }>;
 };
 
 export default async function BrowsePage({ searchParams }: Props) {
   const params = await searchParams;
-  const { q, category, type, sort, listing, owned, view } = params;
+  const { q, category, type, sort, listing, owned, view, pricing } = params;
   const session = await auth();
 
   const where: Record<string, unknown> = {
@@ -37,6 +37,8 @@ export default async function BrowsePage({ searchParams }: Props) {
   if (type) where.type = type;
   if (listing === "community") where.listingType = "community";
   if (listing === "original") where.listingType = "original";
+  if (pricing === "free") where.isFree = true;
+  if (pricing === "premium") where.isFree = false;
 
   // Filter to only purchased skills
   if (owned === "true" && session?.user?.id) {
@@ -79,13 +81,18 @@ export default async function BrowsePage({ searchParams }: Props) {
   });
 
   // Fetch bundles when in bundles view
+  const bundleWhere: Record<string, unknown> = {};
+  if (q) {
+    bundleWhere.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { description: { contains: q, mode: "insensitive" } },
+    ];
+  }
+  if (pricing === "free") bundleWhere.isFree = true;
+  if (pricing === "premium") bundleWhere.isFree = false;
+
   const bundles = view === "bundles" ? await prisma.bundle.findMany({
-    where: q ? {
-      OR: [
-        { name: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ],
-    } : undefined,
+    where: Object.keys(bundleWhere).length > 0 ? bundleWhere : undefined,
     include: {
       skills: {
         include: {
@@ -132,6 +139,7 @@ export default async function BrowsePage({ searchParams }: Props) {
         currentListing={listing}
         currentOwned={owned}
         currentView={view}
+        currentPricing={pricing}
         isSignedIn={!!session?.user}
       />
 
