@@ -56,7 +56,10 @@ const encryptedAdapter: Adapter = {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: encryptedAdapter,
   session: { strategy: "jwt" },
-  providers: [GitHub, Google],
+  providers: [
+    GitHub,
+    Google({ allowDangerousEmailAccountLinking: true }),
+  ],
   pages: {
     signIn: "/auth/signin",
   },
