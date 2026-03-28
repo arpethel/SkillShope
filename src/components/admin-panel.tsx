@@ -95,6 +95,7 @@ export function AdminPanel() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [verifyingAll, setVerifyingAll] = useState(false);
   const [pending, setPending] = useState<PendingAction | null>(null);
 
   useEffect(() => {
@@ -122,8 +123,10 @@ export function AdminPanel() {
   };
 
   const reverifyAll = async () => {
+    setVerifyingAll(true);
     await fetch("/api/admin/verify-source?all=true", { method: "POST" });
-    loadData();
+    await loadData();
+    setVerifyingAll(false);
   };
 
   const requestAction = (type: "skill" | "user", id: string, action: string) => {
@@ -181,10 +184,11 @@ export function AdminPanel() {
       {tab === "skills" && skills.length > 0 && (
         <button
           onClick={reverifyAll}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors"
+          disabled={verifyingAll}
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors disabled:opacity-50"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Verify All Sources
+          <RefreshCw className={`h-3.5 w-3.5 ${verifyingAll ? "animate-spin" : ""}`} />
+          {verifyingAll ? "Verifying..." : "Verify All Sources"}
         </button>
       )}
       </div>

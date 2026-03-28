@@ -137,7 +137,7 @@ export async function verifySource(
   sourceType: string
 ): Promise<VerifyResult> {
   if (!sourceUrl) {
-    return { status: "invalid", details: "No source URL provided" };
+    return { status: "valid", details: "Self-hosted — no external source" };
   }
 
   try {
