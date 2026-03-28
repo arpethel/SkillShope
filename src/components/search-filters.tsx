@@ -12,6 +12,7 @@ type Props = {
   currentSort?: string;
   currentListing?: string;
   currentOwned?: string;
+  currentView?: string;
   isSignedIn?: boolean;
 };
 
@@ -23,6 +24,7 @@ export function SearchFilters({
   currentSort,
   currentListing,
   currentOwned,
+  currentView,
   isSignedIn,
 }: Props) {
   const router = useRouter();
@@ -89,8 +91,28 @@ export function SearchFilters({
       </form>
 
       <div className="flex flex-wrap items-center gap-3">
-      {/* Type filter */}
+      {/* View toggle: Skills vs Bundles */}
       <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
+        {[
+          { label: "Skills", value: "" },
+          { label: "Bundles", value: "bundles" },
+        ].map((v) => (
+          <button
+            key={v.value}
+            onClick={() => updateParam("view", v.value || null)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              (currentView || "") === v.value
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+            }`}
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Type filter — only for skills view */}
+      {currentView !== "bundles" && <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
         {[
           { label: "All", value: "" },
           { label: "Skills", value: "skill" },
@@ -109,9 +131,10 @@ export function SearchFilters({
             {t.label}
           </button>
         ))}
-      </div>
+      </div>}
 
-      {/* Listing type filter */}
+      {/* Listing type filter — only for skills view */}
+      {currentView !== "bundles" &&
       <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
         {[
           { label: "All", value: "" },
@@ -130,7 +153,7 @@ export function SearchFilters({
             {t.label}
           </button>
         ))}
-      </div>
+      </div>}
 
       {/* My Purchases toggle */}
       {isSignedIn && (
