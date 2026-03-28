@@ -96,8 +96,8 @@ export function SearchFilters({
       {/* View toggle: Skills vs Bundles */}
       <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-1">
         {[
-          { label: "Skills", value: "" },
-          { label: "Bundles", value: "bundles" },
+          { label: "Single", value: "" },
+          { label: "Bundle", value: "bundles" },
         ].map((v) => (
           <button
             key={v.value}
